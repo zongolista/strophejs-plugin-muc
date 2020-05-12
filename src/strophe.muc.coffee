@@ -10,6 +10,7 @@
 
 Strophe.addConnectionPlugin 'muc',
   _connection: null
+  _allowEscapeNode: true
   rooms: {}
   roomNames: []
 
@@ -597,9 +598,16 @@ Strophe.addConnectionPlugin 'muc',
     @_connection.sendIQ iq, handle_cb, error_cb
 
   test_append_nick: (room, nick) ->
-    node = Strophe.escapeNode(Strophe.getNodeFromJid(room))
+    if @_allowEscapeNode
+      node = Strophe.escapeNode(Strophe.getNodeFromJid(room))
+    else
+      node = Strophe.getNodeFromJid(room)
     domain = Strophe.getDomainFromJid(room)
     node + "@" + domain + if nick? then "/#{nick}" else ""
+
+  setAllowEscapeNode: (allowEscapeNode) ->
+    @_allowEscapeNode = allowEscapeNode
+    return
 
 class XmppRoom
 
